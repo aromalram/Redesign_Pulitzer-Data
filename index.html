@@ -1,0 +1,359 @@
+<!doctype html>
+<html id="visdown" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Visdown - Markdown for Visualisation</title>
+    <meta name="description" content="Create Simple Visualisation Charts with Markdown">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="lib/vega.min.js"></script>
+    <script src="lib/vega-lite.min.js"></script>
+    <script src="lib/vega-embed.min.js"></script>
+    <script src="lib/marked.min.js"></script>
+    <script src="lib/yaml.min.js"></script>
+    
+    <style>
+      #visdown-output {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+    
+      #visdown-input {
+        display: none;
+      }
+    </style>  
+
+</head>
+<body>
+
+<div id="visdown-input">  
+  ## Chart One
+
+ 
+**For interactive: indirect - automatic snap and voronoi grid**
+
+
+```vis
+width: 400
+height: 400
+data:
+  url: "data/sample.csv"
+
+selection:
+  paintbrush:
+    type: multi
+    'on': mouseover
+    nearest: true
+mark: circle
+encoding:
+  x:
+    type: quantitative
+    field: sales
+  y:
+    type: quantitative
+    field: profit
+  color:
+    condition:
+      selection: paintbrush
+      field: area
+      type: ordinal
+    value: grey
+  size:
+    value: 500
+	
+```
+
+**For interactive: indirect - sliders**
+
+
+```vis
+width: 400
+height: 400
+data:
+	url: data/notes.csv
+selection:
+	pts:
+	  type: single
+	  fields:
+	  - year
+	  bind:
+		input: range
+		min: 1977
+		max: 2015
+		step: 1
+transform:
+	- filter: datum.year == pts_year
+mark: bar
+encoding:
+  x:
+	type: ordinal
+	field: denom
+  y:
+	type: quantitative
+	field: number
+  color:
+	type: nominal
+	field: denom
+```
+
+
+
+
+ **For interactive: indirect - buttons, sliders**
+
+
+```vis
+width: 400
+height: 400
+data:
+  url: "data/sample.csv"
+selection:
+  pts:
+    type: single
+	fields:
+	- area
+	bind:
+	  input: select
+	  options:
+	  - North
+	  - East
+	  - West
+	  - South
+	  - Central
+mark: circle
+encoding:
+  x:
+    type: quantitative
+    field: sales
+  y:
+    type: quantitative
+    field: profit
+  color:
+    value: grey
+	condition:
+	  selection: pts
+	  field: area
+	  type: nominal
+  size:
+    value: 500
+	
+```
+  
+   **For interactive: interval brush**
+
+
+```vis
+width: 400
+height: 400
+data:
+  url: "data/sample.csv"
+selection:
+  pts:
+    type: interval  
+mark: circle
+encoding:
+  x:
+    type: quantitative
+    field: sales
+  y:
+    type: quantitative
+    field: profit
+  color:
+    value: grey
+	condition:
+	  selection: pts
+	  field: area
+	  type: nominal
+  size:
+    value: 500
+	
+```
+  
+  
+  
+  
+  
+    **For interactive: change color on click**
+
+
+```vis
+width: 400
+height: 400
+data:
+  url: "data/sample.csv"
+selection:
+  pts:
+    type: single  
+mark: circle
+encoding:
+  x:
+    type: quantitative
+    field: sales
+  y:
+    type: quantitative
+    field: profit
+  color:
+    value: grey
+	condition:
+	  selection: pts
+	  field: area
+	  type: nominal
+  size:
+    value: 500
+	
+```
+
+  
+ 
+    **Cars**
+
+
+  ```vis
+  data:
+    url: data/cars.csv
+  width: 300
+  height: 400
+  transform:
+  - calculate: datum.price/datum.bhp
+    as: price_bhp
+	
+  
+  mark: point
+  encoding:
+    x:
+      type: nominal
+      field: type
+	   
+    y:
+      type: quantitative
+      field: price
+	
+	size:
+	  value: 400   
+	color:
+	  field: price_bhp
+	  type: quantitative
+	  aggregate: mean
+  ```
+
+  
+  
+  **Denominations released in 1977**
+
+
+  ```vis
+  data:
+    url: data/notes.csv
+  width: 800
+  height: 300
+  
+  transform:
+  - filter: datum.year == 1977
+    
+  mark: bar
+  encoding:
+    x:
+      type: ordinal
+      field: denom
+	  title: sdasdsadsa
+	   
+    y:
+      type: quantitative
+      field: number
+	  sort:
+     
+	color:
+	  type: nominal
+	  field: denom
+  ```
+
+
+
+  **For Color Palette****
+
+ 
+  
+  ```vis
+width: 400
+height: 300
+data:
+  url: data/notes.csv
+layer:
+- mark: area
+  encoding:
+    x:
+      field: year
+      type: temporal
+      axis:
+        format: %Y
+        labelAngle: 0
+    y:
+      aggregate: sum
+      field: money
+      type: quantitative
+      stack: normalize
+      axis:
+        format: %
+    color:
+      field: denom
+      type: nominal
+- mark: line
+  encoding:
+    x:
+      field: year
+      type: temporal
+      axis:
+        format: %Y
+        labelAngle: 0
+    y:
+      aggregate: sum
+      field: number
+      type: quantitative
+    size:
+      value: 3
+    color:
+      value: black
+resolve:
+  y:
+    scale: independent
+```
+  
+  
+  
+  ```vis
+  data:
+    url: "data/cars.csv"
+  mark: circle
+  selection:
+    brush:
+      type: interval
+  encoding:
+    x:
+      type: quantitative
+      field: kmpl
+      scale:
+       domain: [12,25]
+    y:
+      type: quantitative
+      field: price
+      scale:
+       domain: [100,900]
+    color:
+      condition:
+        selection: brush
+        field: type
+        type: nominal
+      value: grey
+    size:
+      type: quantitative
+      field: bhp
+  width: 450
+  height: 300
+  ```    
+    
+</div>
+<div id="visdown-output"></div>
+  
+<script src="visdown.js"></script>
+
+</body>
+</html>
